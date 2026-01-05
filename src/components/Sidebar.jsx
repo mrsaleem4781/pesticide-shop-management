@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import api from '../services/api';
+import api, { normalizeAssetUrl } from '../services/api';
 import { TrendingUp, Package, ShoppingCart, Users, Menu, X, Settings, LogOut } from 'lucide-react';
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen, menuItems, onLogout }) {
@@ -42,7 +42,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen, menuItems, onLogo
         const s = res.data || {};
         if (mounted) {
           setShopName(s.shopName || 'PestiShop Pro');
-          setLogoUrl(s.logoUrl || '/logo.svg');
+          setLogoUrl(normalizeAssetUrl(s.logoUrl || '/logo.svg'));
           const d = typeof s.nearExpiryDays === 'number' ? s.nearExpiryDays : 30;
           setNearExpiryDays(Math.max(1, d));
           try {

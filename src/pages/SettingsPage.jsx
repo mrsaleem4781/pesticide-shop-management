@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Save, Image as ImageIcon, User, Building, Phone } from 'lucide-react';
-import api from '../services/api';
+import api, { normalizeAssetUrl } from '../services/api';
 
 export default function SettingsPage({ showNotification }) {
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ export default function SettingsPage({ showNotification }) {
           shopName: data.shopName || '',
           address: data.address || '',
           contact: data.contact || '',
-          logoUrl: data.logoUrl || '/logo.svg',
+          logoUrl: normalizeAssetUrl(data.logoUrl || '/logo.svg'),
           nearExpiryDays: typeof data.nearExpiryDays === 'number' ? data.nearExpiryDays : 30
         });
       } catch (err) {
@@ -63,7 +63,7 @@ export default function SettingsPage({ showNotification }) {
           const resp = await api.post('/settings/logo', { dataUrl });
           const url = resp.data && resp.data.url;
           if (url) {
-            setForm(f => ({ ...f, logoUrl: url }));
+            setForm(f => ({ ...f, logoUrl: normalizeAssetUrl(url) }));
             showNotification && showNotification('Logo uploaded successfully');
             window.dispatchEvent(new Event('settings-changed'));
           } else {

@@ -9,6 +9,22 @@ export const API_URL =
   (import.meta.env?.VITE_API_URL) ||
   (isProd || isNetlifyHost ? PROD_FALLBACK_API : 'http://localhost:5001/api');
 
+const RENDER_ORIGIN = 'https://pesticide-shop-management.onrender.com';
+export const normalizeAssetUrl = (url) => {
+  try {
+    if (!url) return url;
+    const base = new URL(RENDER_ORIGIN);
+    const u = new URL(url, base);
+    if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {
+      u.protocol = base.protocol;
+      u.host = base.host;
+    }
+    return u.toString();
+  } catch (_) {
+    return url;
+  }
+};
+
 const api = axios.create({
   baseURL: API_URL,
   headers: {

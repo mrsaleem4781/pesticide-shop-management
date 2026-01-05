@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { normalizeAssetUrl } from '../services/api';
 
 // Dynamic company info from settings
 const DEFAULT_COMPANY = {
@@ -60,7 +60,7 @@ export default function InvoiceView({ showNotification }) {
           shopName: s.shopName || DEFAULT_COMPANY.shopName,
           address: s.address || DEFAULT_COMPANY.address,
           contact: s.contact || DEFAULT_COMPANY.contact,
-          logoUrl: s.logoUrl || DEFAULT_COMPANY.logoUrl
+          logoUrl: normalizeAssetUrl(s.logoUrl || DEFAULT_COMPANY.logoUrl)
         });
       } catch (err) {
         // keep defaults

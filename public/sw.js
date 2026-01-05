@@ -13,6 +13,10 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+  try {
+    const url = new URL(req.url);
+    if (url.origin !== self.location.origin) return;
+  } catch (_) {}
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req).catch(() => caches.match('/index.html'))
@@ -25,7 +29,7 @@ self.addEventListener('fetch', (event) => {
         const respClone = networkResp.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(req, respClone)).catch(() => {});
         return networkResp;
-      }).catch(() => cached);
+      }).catch(() => cached || new Response('Offline', { status: 503 }));
       return cached || fetchPromise;
     })
   );
