@@ -12,7 +12,7 @@ const Invoice = require('./models/Invoice');
 // Middleware
 const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
 const allowedOrigins = allowedOriginsEnv.split(',').map(s => s.trim()).filter(Boolean);
-const cors = require('cors'); // Ensure cors is imported
+
 
 app.use(cors({
   origin: (origin, callback) => {
