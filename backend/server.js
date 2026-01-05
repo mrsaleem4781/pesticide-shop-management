@@ -12,19 +12,31 @@ const Invoice = require('./models/Invoice');
 // Middleware
 const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
 const allowedOrigins = allowedOriginsEnv.split(',').map(s => s.trim()).filter(Boolean);
+const cors = require('cors'); // Ensure cors is imported
+
 app.use(cors({
   origin: (origin, callback) => {
+    // 1. Agar request bina origin ke aaye (jaise Postman ya server-to-server), allow karein
     if (!origin) return callback(null, true);
-    if (allowedOrigins.length === 0) {
-      const allowLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
-      const allowNetlify = origin.indexOf('netlify.app') !== -1;
-      const allowRender = origin.indexOf('onrender.com') !== -1;
-      if (allowLocal || allowNetlify || allowRender) return callback(null, true);
+
+    // 2. Localhost ports allow karein (Development ke liye)
+    const allowedLocal = [
+      "http://localhost:5173",
+      "http://localhost:5175",
+      "http://localhost:3000"
+    ];
+
+    // 3. Logic check
+    if (
+      allowedLocal.includes(origin) ||          // Localhost check
+      origin.endsWith(".netlify.app") ||        // Koi bhi Netlify app allow karega
+      origin.endsWith(".onrender.com")          // Render domain allow karega
+    ) {
+      return callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin); // Troubleshooting ke liye log
       return callback(new Error('Not allowed by CORS'));
     }
-    if (allowedOrigins.includes('*')) return callback(null, true);
-    if (allowedOrigins.some(o => origin.indexOf(o) !== -1)) return callback(null, true);
-    return callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
