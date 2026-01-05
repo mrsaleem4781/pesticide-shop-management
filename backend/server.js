@@ -16,8 +16,10 @@ app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.length === 0) {
-      // Default allow localhost in dev
-      if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) return callback(null, true);
+      const allowLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
+      const allowNetlify = origin.indexOf('netlify.app') !== -1;
+      const allowRender = origin.indexOf('onrender.com') !== -1;
+      if (allowLocal || allowNetlify || allowRender) return callback(null, true);
       return callback(new Error('Not allowed by CORS'));
     }
     if (allowedOrigins.includes('*')) return callback(null, true);
@@ -30,7 +32,10 @@ app.options('*', cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
     if (allowedOrigins.length === 0) {
-      if (origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1')) return callback(null, true);
+      const allowLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
+      const allowNetlify = origin.indexOf('netlify.app') !== -1;
+      const allowRender = origin.indexOf('onrender.com') !== -1;
+      if (allowLocal || allowNetlify || allowRender) return callback(null, true);
       return callback(new Error('Not allowed by CORS'));
     }
     if (allowedOrigins.includes('*')) return callback(null, true);
